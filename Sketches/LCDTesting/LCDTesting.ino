@@ -22,87 +22,61 @@
 #define ENABLE				3	// Enable signal for writing or reading data
 #define INIT			B0011	// First initialization string sent 3 times to LCD
 #define FOURBIT			B0010	// Interface set to 4 bit. High bits sent first, low bits second.
-#define LCD_ON			B1111	// LCD on, precede with ZEROS command for high bits
+#define LCD_ON			B1100	// LCD on, precede with ZEROS command for high bits
 #define LCD_OFF			B1000	// LCD off, precede with ZEROS
 #define CLEAR			B0001	// LCD clear, precede with ZEROS
 #define ENTRY_MODE		B0110	// ENTRY_MODE Mode, precede with ZEROS
 #define FUNCTION_SET	B1000	// Set number of lines and font
-#define BUSY			4
+#define SETUP_STEPS		   14	// Number of commands that are carried out during LCD initilization
 
-const byte SETUP[] = {FOURBIT, B0010, FUNCTION_SET, ZEROS, LCD_OFF, ZEROS, CLEAR, ZEROS, ENTRY_MODE};
+const byte setupCmds[SETUP_STEPS] = {INIT, INIT, INIT, FOURBIT, B0010, FUNCTION_SET, ZEROS, LCD_OFF,
+									ZEROS, CLEAR, ZEROS, ENTRY_MODE, ZEROS, LCD_ON};
+const int setupDelays[SETUP_STEPS] = {4500, 150, 100, 100, 0, 100, 0, 100, 0, 2500, 0, 100, 0, 100};
 
 void setup()
 {
 	//Serial Port Init
-	Serial.begin(115200);
+	//Serial.begin(115200);
 
 	// Pin Mapping
-	DDRB = B1111; // Enable Port B as output
+	DDRB = B111111; // Enable Port B as output
 	pinMode(RS, OUTPUT);
 	pinMode(ENABLE, OUTPUT);
-	pinMode(BUSY, INPUT);
-	//DDRD = DDRD | B11111100; // Enable Port D as output without touching pins 0, 1.
 
 	// Initialize LCD
 	delay(50); // 20 ms before LCD init
 
-	digitalWrite(RS, LOW); // Set RS Pin to low
+	commandMode();
 	digitalWrite(ENABLE, LOW);
-	
-	command(INIT);
-	delayMicroseconds(4500);
-	
-	command(INIT);
-	delayMicroseconds(150);
-	
-	command(INIT);
-	delayMicroseconds(100);
-	
-	command(FOURBIT);
-	delayMicroseconds(100);
 
-	command(FOURBIT);
-	command(FUNCTION_SET);
-	
-	command(ZEROS);
-	command(LCD_OFF);
+	for (int i = 0; i < SETUP_STEPS; i++) // Initialize LCD
+	{
+		command(setupCmds[i]);
+		delayMicroseconds(setupDelays[i]);
+	}
 
-	clear();
-	
-	command(ZEROS);
-	command(ENTRY_MODE);
-
-	// LCD Done
-	command(ZEROS);
-	command(LCD_ON);
-
-	digitalWrite(RS, HIGH);
-		
+	characterMode();
 }
 
 void loop()
 {
-	character(1011);
-	character(1011);
-	delay(1000);
-	character(1101);
-	character(1100);
-	delay(1000);	
-	character(1111);
-	character(1101);
-	delay(1000);
+	command(B1011);
+	command(B1011);
+	delay(700);
+	command(B1101);
+	command(B1100);
+	delay(700);
+	command(B1111);
+	command(B1101);
+	delay(700);
+	clear();
+	delay(700);
 }
 
-void pulseHigh()
+void pulse()
 {
-	delayMicroseconds(1);
 	digitalWrite(ENABLE, HIGH);
 	delayMicroseconds(1);
-}
-
-void pulseLow()
-{
-	delayMicroseconds(100);
 	digitalWrite(ENABLE, LOW);	
 	delayMicroseconds(1);
 }
@@ -110,22 +84,26 @@ void pulseLow()
 void command(byte x)
 {
 	PORTB = x;
-	pulseHigh();
-	pulseLow();
+	pulse();
 }
 
 void clear()
 {
-	digitalWrite(RS, LOW);
-	delayMicroseconds(1);
+	commandMode();
 	command(ZEROS);
 	command(CLEAR);
-	delayMicroseconds(3000);
+	delayMicroseconds(2500);
+	characterMode();
 }
 
-void character(byte x)
+void commandMode()
 {
-	PORTB = x;
-	pulseHigh();
-	pulseLow();
+	digitalWrite(RS, LOW);
+	delayMicroseconds(1);
+}
+
+void characterMode()
+{
+	digitalWrite(RS, HIGH);
+	delayMicroseconds(1);	
 }
