@@ -26,7 +26,8 @@
 #define LCD_OFF			B1000	// LCD off, precede with ZEROS
 #define CLEAR			B0001	// LCD clear, precede with ZEROS
 #define ENTRY_MODE		B0110	// ENTRY_MODE Mode, precede with ZEROS
-#define FUNCTION_SET	B1000	// Set number of lines and FUNCTION_SET
+#define FUNCTION_SET	B1000	// Set number of lines and font
+#define BUSY			4
 
 const byte SETUP[] = {FOURBIT, B0010, FUNCTION_SET, ZEROS, LCD_OFF, ZEROS, CLEAR, ZEROS, ENTRY_MODE};
 
@@ -36,83 +37,95 @@ void setup()
 	Serial.begin(115200);
 
 	// Pin Mapping
-	DDRB = B111111; // Enable Port B as output
+	DDRB = B1111; // Enable Port B as output
 	pinMode(RS, OUTPUT);
 	pinMode(ENABLE, OUTPUT);
+	pinMode(BUSY, INPUT);
 	//DDRD = DDRD | B11111100; // Enable Port D as output without touching pins 0, 1.
 
 	// Initialize LCD
 	delay(50); // 20 ms before LCD init
-	pulse();
 
-	digitalWrite(RS, LOW);
-	PORTB = INIT;
+	digitalWrite(RS, LOW); // Set RS Pin to low
+	digitalWrite(ENABLE, LOW);
+	
+	command(INIT);
 	delayMicroseconds(4500);
 	
-	PORTB = INIT;
+	command(INIT);
 	delayMicroseconds(150);
 	
-	PORTB = INIT;
+	command(INIT);
 	delayMicroseconds(100);
 	
-	PORTB = FOURBIT;
+	command(FOURBIT);
 	delayMicroseconds(100);
 
-	PORTB = B0010;
-	pulse();
-	PORTB = FUNCTION_SET;
-	pulse();
+	command(FOURBIT);
+	command(FUNCTION_SET);
 	
-	PORTB = ZEROS;
-	pulse();
-	PORTB = LCD_OFF;
-	pulse();
+	command(ZEROS);
+	command(LCD_OFF);
 
-	PORTB = ZEROS;
-	pulse();
-	PORTB = CLEAR;
-	pulse();
-	delay(4);
+	clear();
 	
-	PORTB = ZEROS;
-	pulse();
-	PORTB = ENTRY_MODE;
-	pulse();
+	command(ZEROS);
+	command(ENTRY_MODE);
 
 	// LCD Done
-	PORTB = ZEROS;
-	pulse();
-	PORTB = LCD_ON;
-	pulse();
+	command(ZEROS);
+	command(LCD_ON);
 
-	PORTB = 0100;
-	pulse();
-	PORTB = 1101;
-	pulse();
-	PORTB = 0100;
-	pulse();
-	PORTB = 1101;
-	pulse();
-	PORTB = 0100;
-	pulse();
-	PORTB = 1101;
-	pulse();
+	digitalWrite(RS, HIGH);
+		
 }
 
 void loop()
 {
-	// PORTB = 0010;
-	// pulse();
-	// PORTB = 0001;
-	// pulse();
-	//delay(1000);
+	character(1011);
+	character(1011);
+	delay(1000);
+	character(1101);
+	character(1100);
+	delay(1000);	
+	character(1111);
+	character(1101);
+	delay(1000);
 }
 
-void pulse()
+void pulseHigh()
 {
 	delayMicroseconds(1);
 	digitalWrite(ENABLE, HIGH);
 	delayMicroseconds(1);
-	digitalWrite(ENABLE, LOW);	
+}
+
+void pulseLow()
+{
 	delayMicroseconds(100);
+	digitalWrite(ENABLE, LOW);	
+	delayMicroseconds(1);
+}
+
+void command(byte x)
+{
+	PORTB = x;
+	pulseHigh();
+	pulseLow();
+}
+
+void clear()
+{
+	digitalWrite(RS, LOW);
+	delayMicroseconds(1);
+	command(ZEROS);
+	command(CLEAR);
+	delayMicroseconds(3000);
+}
+
+void character(byte x)
+{
+	PORTB = x;
+	pulseHigh();
+	pulseLow();
 }
