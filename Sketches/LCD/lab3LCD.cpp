@@ -8,7 +8,8 @@
 #include "Arduino.h"
 #include "lab3LCD.h"
 
-void lcdInitialize () // LCD initialization sequence
+// lcdInitialize() - LCD initialization sequence
+void lcdInitialize ()
 {
   DDRB = B111111; // Enable Port B as output
   pinMode(RS, OUTPUT); // Pin Mapping RS as Output
@@ -36,7 +37,8 @@ void lcdInitialize () // LCD initialization sequence
   characterMode(); // Set character input for loop()
 }
 
-void pulse() // pulses enable pin to signal data byte send has complete
+// pulse() - enable pin to signal data byte send has complete
+void pulse()
 {
   digitalWrite(ENABLE, HIGH);
   delayMicroseconds(1);
@@ -44,18 +46,20 @@ void pulse() // pulses enable pin to signal data byte send has complete
   delayMicroseconds(1);
 }
 
-// 4 bit commands used only in the start of the setup are sent with this.
+// setupCommand(byte) - 4 bit commands used only in the start of the setup are sent with this.
 void setupCommand(byte four)
 {
   PORTB = four; // ensure we don't send data to pins 11/12 which aren't hooked up.
   pulse();
 }
 
+// write(int) - Outputs a custom character stored in slots 0-7.
 void write(int cgRamCustom)
 {
   command((byte) cgRamCustom);
 }
 
+// command(byte) - Helper function to send an LCD byte command as two nibbles.
 void command(byte eight)
 {
   PORTB = eight >> 4;
@@ -65,7 +69,8 @@ void command(byte eight)
   delayMicroseconds(100);
 }
 
-void printLine(String message) // prints passed message to LCD display
+// printLine(String) - prints passed message to LCD display
+void printLine(String message)
 {
   char stoaBuffer[BLENGTH];
   message.toCharArray(stoaBuffer, BLENGTH);
@@ -76,19 +81,22 @@ void printLine(String message) // prints passed message to LCD display
   }
 }
 
-void commandMode() // signals LCD to accept following bytes as commands
+// commandMode() - signals LCD to accept following bytes as commands
+void commandMode()
 {
   digitalWrite(RS, LOW);
   delayMicroseconds(1);
 }
 
-void characterMode() // signals LCD to accept following bytes as character information
+// characterMode() - signals LCD to accept following bytes as character information
+void characterMode()
 {
   digitalWrite(RS, HIGH);
   delayMicroseconds(1);	
 }
 
-void setCursor(int column, int row) // sets LCD cursor to specified row and column
+// setCursor(int, int) - sets LCD cursor to specified row and column
+void setCursor(int column, int row)
 {
   commandMode();
  
@@ -100,7 +108,8 @@ void setCursor(int column, int row) // sets LCD cursor to specified row and colu
   characterMode(); 
 }
 
-void blink (int n, int time) // blinks LCD display n times. note that time is in miliseconds
+// blink(int, int) - blinks LCD display n times. note that time is in miliseconds
+void blink (int n, int time)
 {
   commandMode();
   for (int i = 0; i < n; i++) {
@@ -112,7 +121,8 @@ void blink (int n, int time) // blinks LCD display n times. note that time is in
   characterMode();  
 }
 
-void scrollDisplayLeft() // scrolls LCD display one space to the left
+// scrollDisplayLeft() - scrolls LCD display one space to the left
+void scrollDisplayLeft()
 {
   commandMode();
   command(CD_SHIFT_LEFT);
@@ -120,7 +130,8 @@ void scrollDisplayLeft() // scrolls LCD display one space to the left
   characterMode(); 
 }
 
-void scrollDisplayRight() // scrolls LCD display one space to the right
+// scrollDisplayRight() - scrolls LCD display one space to the right
+void scrollDisplayRight()
 {
   commandMode();
   command(CD_SHIFT_RIGHT);
@@ -128,6 +139,7 @@ void scrollDisplayRight() // scrolls LCD display one space to the right
   characterMode(); 
 }
 
+// createChar(int, byte*)
 // create custom character in GRAM slot ramSpot.
 // charMap should by an 8*8 byte array holding one row of the custom character per line
 void createChar (int ramSpot, byte * charMap)
@@ -142,7 +154,8 @@ void createChar (int ramSpot, byte * charMap)
   }
 }
 
-void clear() // clears LCD display
+// clear() - clears LCD display
+void clear()
 {
   commandMode();
   command(CLEAR);
