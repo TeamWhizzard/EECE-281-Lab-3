@@ -70,24 +70,15 @@ void loop()
 
 void initializeGraph ()
 {
-  byte h = B11111;
-  byte l = B00000;
-  byte graphChar[][8] = {{l,l,l,l,l,l,l,h},
-  {l,l,l,l,l,l,h,h},
-  {l,l,l,l,l,h,h,h},
-  {l,l,l,l,h,h,h,h},
-  {l,l,l,h,h,h,h,h},
-  {l,l,h,h,h,h,h,h},
-  {l,h,h,h,h,h,h,h},
-  {h,h,h,h,h,h,h,h}};
-  createChar(0, graphChar[0]);
-  createChar(1, graphChar[1]);
-  createChar(2, graphChar[2]);
-  createChar(3, graphChar[3]);
-  createChar(4, graphChar[4]);
-  createChar(5, graphChar[5]);
-  createChar(6, graphChar[6]);
-  createChar(7, graphChar[7]);
+  
+  byte graphChar[] = {ZEROS, ZEROS, ZEROS, ZEROS, ZEROS, ZEROS, ZEROS, ZEROS};
+  byte line = B11111;
+  
+  for (int i; i < 8; i++ ) {
+    graphChar[7 - i] = line; 
+    createChar(i, graphChar);
+  }
+  setCursor(0,0);
 }
 
 void moistureHistory (int moisture)
