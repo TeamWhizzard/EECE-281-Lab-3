@@ -28,12 +28,21 @@
 #define SET_CGRAM               B01000000  // First for bits of Set CGRAM Address command
 #define SETUP_SIZE              9
 #define BLENGTH                 40      // Length of display plus extra for null string character
+<<<<<<< HEAD
+=======
+#define CD_SHIFT                B0001   // First four bits of Cursor or Display Shift
+#define CD_SHIFT_LEFT           B1000   // Second four bits of Left Cursor or Display Shift
+#define CD_SHIFT_RIGHT          B1100   // Second four bits of Right Cursor or Display Shift
+#define SET_CGRAM               B0100   // First for bits of Set CGRAM Address command
+#define ROW_TOP                 B1000   // High four bits for accessing top row, followed with ZEROS
+#define ROW_BOTTOM              B1100   // High four bits for accessing bottome row, followed with ZEROS
+>>>>>>> origin/master
 
 #define ARRAY_SIZE(x)	(sizeof(x) / sizeof(x[0]) - 1) // Array Size Macro for strings without null
 
 void lcdInitialize ();
 void printLine(String);
-void cursorPlace(int);
+void setCursor(int, int);
 void scrollDisplayLeft(void);
 void scrollDisplayRight(void);
 void blink (int, int);

@@ -8,8 +8,8 @@
 #include "Arduino.h"
 #include "lab3LCD.h"
 
-void lcdInitialize () {
-  Serial.begin(115200); //Serial Port Initialization
+void lcdInitialize () // LCD initialization sequence
+{
   DDRB = B111111; // Enable Port B as output
   pinMode(RS, OUTPUT); // Pin Mapping RS as Output
   pinMode(ENABLE, OUTPUT); // Pin Mapping Enable as Output
@@ -36,7 +36,11 @@ void lcdInitialize () {
   characterMode(); // Set character input for loop()
 }
 
+<<<<<<< HEAD
 void pulse()
+=======
+void pulse() // pulses enable pin to signal data byte send has complete
+>>>>>>> origin/master
 {
   digitalWrite(ENABLE, HIGH);
   delayMicroseconds(1);
@@ -44,13 +48,18 @@ void pulse()
   delayMicroseconds(1);
 }
 
+<<<<<<< HEAD
 // 4 bit commands used only in the start of the setup are sent with this.
 void setupCommand(byte four)
+=======
+void command(byte x)  // sends signal over 4 bit bus
+>>>>>>> origin/master
 {
   PORTB = B001111 & four; // ensure we don't send data to pins 11/12 which aren't hooked up.
   pulse();
 }
 
+<<<<<<< HEAD
 void command(byte eight)
 {
   PORTB = eight >> 4;
@@ -61,6 +70,9 @@ void command(byte eight)
 }
 
 void printLine(String message)
+=======
+void printLine(String message) // prints passed message to LCD display
+>>>>>>> origin/master
 {
   char stoaBuffer[BLENGTH];
   message.toCharArray(stoaBuffer, BLENGTH);
@@ -71,34 +83,34 @@ void printLine(String message)
   }
 }
 
-void commandMode()
+void commandMode() // signals LCD to accept following bytes as commands
 {
   digitalWrite(RS, LOW);
   delayMicroseconds(1);
 }
 
-void characterMode()
+void characterMode() // signals LCD to accept following bytes as character information
 {
   digitalWrite(RS, HIGH);
   delayMicroseconds(1);	
 }
 
-void cursorPlace(int row)
+void setCursor(int column, int row) // sets LCD cursor to specified row and column
 {
   commandMode();
  
   if (row == 0) { // top row, set to DDRAM address 0x80
-    command (B1000);
-    command (B0000);
+    command (ROW_TOP);
+    command ((byte) column);
   } else if (row == 1) { // bottom row, set to DDRAM address 0xC0
-    command (B1100);
-    command (B0000);
+    command (ROW_BOTTOM);
+    command ((byte) column);
   }
  
   characterMode(); 
 }
 
-void blink (int n, int time) // time in miliseconds
+void blink (int n, int time) // blinks LCD display n times. note that time is in miliseconds
 {
   commandMode();
   for (int i = 0; i < n; i++) {
@@ -110,7 +122,7 @@ void blink (int n, int time) // time in miliseconds
   characterMode();  
 }
 
-void scrollDisplayLeft()
+void scrollDisplayLeft() // scrolls LCD display one space to the left
 {
   commandMode();
   command(CD_SHIFT_LEFT);
@@ -118,8 +130,7 @@ void scrollDisplayLeft()
   characterMode(); 
 }
 
-// TODO fix
-void scrollDisplayRight()
+void scrollDisplayRight() // scrolls LCD display one space to the right
 {
   commandMode();
   command(CD_SHIFT_RIGHT);
@@ -127,7 +138,9 @@ void scrollDisplayRight()
   characterMode(); 
 }
 
-void createChar (int ramSpot, char * charMap) {
+
+void createChar (int ramSpot, byte * charMap) // create custom character in GRAM slot ramSpot.
+{ // charMap should by an 8*8 byte array holding one row of the custom character per line
   byte address = SET_CGRAM | ramSpot << 3;
   
   commandMode();
@@ -138,7 +151,7 @@ void createChar (int ramSpot, char * charMap) {
   }  
 }
 
-void clear()
+void clear() // clears LCD display
 {
   commandMode();
   command(CLEAR);
