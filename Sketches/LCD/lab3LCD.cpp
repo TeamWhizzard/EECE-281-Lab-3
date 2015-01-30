@@ -8,14 +8,15 @@
 #include "Arduino.h"
 #include "lab3LCD.h"
 
-const byte setupCmds[] = {INIT, INIT, INIT, FOURBIT, B0010, FUNCTION_SET, ZEROS, LCD_OFF, ZEROS, CLEAR, ZEROS, ENTRY_MODE, ZEROS, LCD_ON};
-const int setupDelays[] = {4500, 150, 100, 100, 0, 100, 0, 100, 0, 2500, 0, 100, 0, 100};
-
 void lcdInitialize () {
   Serial.begin(115200); //Serial Port Initialization
   DDRB = B111111; // Enable Port B as output
   pinMode(RS, OUTPUT); // Pin Mapping RS as Output
   pinMode(ENABLE, OUTPUT); // Pin Mapping Enable as Output
+ 
+  byte setupCmds[] = {INIT, INIT, INIT, FOURBIT, B0010, FUNCTION_SET, ZEROS, LCD_OFF, ZEROS, CLEAR, ZEROS, ENTRY_MODE, ZEROS, LCD_ON};
+  int setupDelays[] = {4500, 150, 100, 100, 0, 100, 0, 100, 0, 2500, 0, 100, 0, 100};
+
   delay(20); // Initial delay before LCD init
   commandMode(); // Prep LCD to receive initialization commands
   digitalWrite(ENABLE, LOW); // Ensure Enable is set to low before LCD initialization
@@ -26,6 +27,11 @@ void lcdInitialize () {
     delayMicroseconds(setupDelays[i]);
   }
   characterMode(); // Set character input for loop()
+}
+
+void setCharacter()
+{
+   
 }
 
 void pulse()

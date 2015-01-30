@@ -39,7 +39,6 @@ void scrollDisplayRight(void);
 void blink (int, int);
 void clear(void);
 
-private:
 void command(byte x);
 void pulse(void);
 void commandMode(void);
