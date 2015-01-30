@@ -24,10 +24,10 @@
 #define ENTRY_MODE		B0110	// ENTRY_MODE Mode, precede with ZEROS
 #define FUNCTION_SET  	        B1000	// Set number of lines and font
 #define SETUP_SIZE		   14	// Array size of both setup elements
-#define BLENGTH        17 // length of display plus extra for null string character
-#define CD_SHIFT    B0010
-#define CD_SHIFT_LEFT  B0010
-#define CD_SHIFT_RIGHT B0011
+#define BLENGTH        40 // length of display plus extra for null string character
+#define CD_SHIFT    B0001
+#define CD_SHIFT_LEFT  B1000
+#define CD_SHIFT_RIGHT B1100
 
 #define ARRAY_SIZE(x)	(sizeof(x) / sizeof(x[0]) - 1) // Array Size Macro for strings without null
 
@@ -38,8 +38,8 @@ extern void printLine(String);
 extern void commandMode(void);
 extern void characterMode(void);
 extern void cursorPlace(int);
-void scrollDisplayLeft(void);
-void scrollDisplayLeft(void);
+extern void scrollDisplayLeft(void);
+extern void scrollDisplayRight(void);
 extern void blink (int, int);
 extern void clear(void);
 

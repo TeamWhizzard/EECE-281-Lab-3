@@ -16,46 +16,46 @@ const String message_title = "  CRAPPY BIRD!";
 
 void setup()
 {
-	lcdInitialize();
-        pinMode(pinMoisture, INPUT);
+  lcdInitialize();
+  pinMode(pinMoisture, INPUT);
 
-        // Print startup message to LCD
-        cursorPlace(0);
-        printLine(message_one.substring(0,16)); // first 16 characters of message
-        cursorPlace(1);
-        printLine(message_one.substring(16)); // remaining characters of message
-        delay(1000);
-        clear();
+  // Print startup message to LCD
+  cursorPlace(0);
+  printLine(message_one.substring(0,16)); // first 16 characters of message
+  cursorPlace(1);
+  printLine(message_one.substring(16)); // remaining characters of message
+  delay(1000);
+  clear();
         
-        // Displays second message
-        cursorPlace(0);
-        printLine(message_two);
-        delay(1000);
-        //for (int i = 0; i < message_two.length() - 16; i++) { // scroll to end of message
-          scrollDisplayLeft();
-          delay (500);
-        //}
-        delay(2000);
-        clear();
-//        
-//        // Custom message
-//        cursorPlace(0);
-//        printLine(message_whizzard.substring(0,16)); // first 16 characters of message
-//        cursorPlace(1);
-//        printLine(message_whizzard.substring(16)); // remaining characters of message
-//        delay(1000);
-//        clear();
-//        
-//        cursorPlace(0);
-//        printLine(message_title);
-//        blink(5, 500);
-//        delay(2000);
-//        clear();
+  // Displays second message and scroll off screen to left
+  cursorPlace(0);
+  printLine(message_two);
+  delay(1000);
+  for (int i = 0; i < message_two.length() - 16; i++) { // scroll to end of message
+    scrollDisplayLeft();
+    delay (500);
+  }
+  delay(2000);
+  clear();
+        
+  // Custom message
+  cursorPlace(0);
+  printLine(message_whizzard.substring(0,16)); // first 16 characters of message
+  cursorPlace(1);
+  printLine(message_whizzard.substring(16)); // remaining characters of message
+  delay(1000);
+  clear();
+        
+  cursorPlace(0);
+  printLine(message_title);
+  blink(5, 500);
+  delay(1000);
+  clear();
 }
 
 void loop()
 {
-//        printLine(String(analogRead(pinMoisture)));
-//        delay(1000);
-//        clear();
+  printLine(String(analogRead(pinMoisture)));
+  delay(1000);
+  clear();
 }

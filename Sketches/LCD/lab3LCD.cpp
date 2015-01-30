@@ -12,34 +12,34 @@ const byte setupCmds[] = {INIT, INIT, INIT, FOURBIT, B0010, FUNCTION_SET, ZEROS,
 const int setupDelays[] = {4500, 150, 100, 100, 0, 100, 0, 100, 0, 2500, 0, 100, 0, 100};
 
 void lcdInitialize () {
-        Serial.begin(115200); //Serial Port Initialization
-        DDRB = B111111; // Enable Port B as output
-	pinMode(RS, OUTPUT); // Pin Mapping RS as Output
-	pinMode(ENABLE, OUTPUT); // Pin Mapping Enable as Output
-	delay(20); // Initial delay before LCD init
-	commandMode(); // Prep LCD to receive initialization commands
-	digitalWrite(ENABLE, LOW); // Ensure Enable is set to low before LCD initialization
+  Serial.begin(115200); //Serial Port Initialization
+  DDRB = B111111; // Enable Port B as output
+  pinMode(RS, OUTPUT); // Pin Mapping RS as Output
+  pinMode(ENABLE, OUTPUT); // Pin Mapping Enable as Output
+  delay(20); // Initial delay before LCD init
+  commandMode(); // Prep LCD to receive initialization commands
+  digitalWrite(ENABLE, LOW); // Ensure Enable is set to low before LCD initialization
 
-	for (int i = 0; i < SETUP_SIZE; i++) // Initialize LCD
-	{
-		command(setupCmds[i]);
-		delayMicroseconds(setupDelays[i]);
-	}
-	characterMode(); // Set character input for loop()
+  for (int i = 0; i < SETUP_SIZE; i++) // Initialize LCD
+  {
+    command(setupCmds[i]);
+    delayMicroseconds(setupDelays[i]);
+  }
+  characterMode(); // Set character input for loop()
 }
 
 void pulse()
 {
-	digitalWrite(ENABLE, HIGH);
-	delayMicroseconds(1);
-	digitalWrite(ENABLE, LOW);	
-	delayMicroseconds(1);
+  digitalWrite(ENABLE, HIGH);
+  delayMicroseconds(1);
+  digitalWrite(ENABLE, LOW);
+  delayMicroseconds(1);
 }
 
 void command(byte x)
 {
-	PORTB = x;
-	pulse();
+  PORTB = x;
+  pulse();
 }
 
 void printLine(String message)
@@ -47,8 +47,6 @@ void printLine(String message)
   char stoaBuffer[BLENGTH];
 
   message.toCharArray(stoaBuffer,BLENGTH);
-  // remove null character from buffer if applicable
-  if (message.length() < 16) stoaBuffer[message.length()] = ' ';
 
   for (int i = 0; i < message.length(); i++)
   {
@@ -60,14 +58,14 @@ void printLine(String message)
 
 void commandMode()
 {
-	digitalWrite(RS, LOW);
-	delayMicroseconds(1);
+  digitalWrite(RS, LOW);
+  delayMicroseconds(1);
 }
 
 void characterMode()
 {
-	digitalWrite(RS, HIGH);
-	delayMicroseconds(1);	
+  digitalWrite(RS, HIGH);
+  delayMicroseconds(1);	
 }
 
 void cursorPlace(int row)
@@ -104,22 +102,25 @@ void scrollDisplayLeft()
   commandMode();
   command(CD_SHIFT);  // LCD cursor shift
   command(CD_SHIFT_LEFT);
+  delayMicroseconds(2500);
   characterMode(); 
 }
 
+// TODO fix
 void scrollDisplayRight()
 {
   commandMode();
   command(CD_SHIFT);  // LCD cursor shift
   command(CD_SHIFT_RIGHT);
+  delayMicroseconds(2500);
   characterMode(); 
 }
 
 void clear()
 {
-	commandMode();
-	command(ZEROS);
-	command(CLEAR);
-	delayMicroseconds(2500);
-	characterMode();
+  commandMode();
+  command(ZEROS);
+  command(CLEAR);
+  delayMicroseconds(2500);
+  characterMode();
 }
