@@ -51,6 +51,11 @@ void setupCommand(byte four)
   pulse();
 }
 
+void write(int cgRamCustom)
+{
+  command((byte) cgRamCustom);
+}
+
 void command(byte eight)
 {
   PORTB = eight >> 4;
@@ -123,17 +128,18 @@ void scrollDisplayRight() // scrolls LCD display one space to the right
   characterMode(); 
 }
 
-
-void createChar (int ramSpot, byte * charMap) // create custom character in GRAM slot ramSpot.
-{ // charMap should by an 8*8 byte array holding one row of the custom character per line
-  byte address = SET_CGRAM | ramSpot << 3;
+// create custom character in GRAM slot ramSpot.
+// charMap should by an 8*8 byte array holding one row of the custom character per line
+void createChar (int ramSpot, byte * charMap)
+{
+  byte address = SET_CGRAM | (((byte) ramSpot) << 3);
   
   commandMode();
   command(address);
   characterMode();
   for (int i = 0; i < 8; i++) {
-    command(charMap[i]);	
-  }  
+    command(charMap[i]);
+  }
 }
 
 void clear() // clears LCD display

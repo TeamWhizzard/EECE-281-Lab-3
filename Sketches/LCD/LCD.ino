@@ -14,6 +14,29 @@ const String message_two = "EECE 281 section 202 Team L2D-7B";
 const String message_whizzard = "Whizzard is proud to present:";
 const String message_title = "CRAPPY BIRD!";
 
+byte frownie[8] = {
+  0b00000,
+  0b00000,
+  0b01010,
+  0b00000,
+  0b00000,
+  0b00000,
+  0b01110,
+  0b10001
+};
+
+byte heart[] = {
+  B00000,
+  B01010,
+  B11111,
+  B11111,
+  B11111,
+  B01110,
+  B00100,
+  B00000
+};
+
+
 void setup()
 {
   Serial.begin(115200); //Serial Port Initialization
@@ -35,7 +58,7 @@ void setup()
   delay(1000);
   for (int i = 0; i < message_two.length() - 16; i++) { // scroll to end of message
     scrollDisplayLeft();
-    delay (500);
+    delay (1000);
     }
   delay(2000);
   clear();
@@ -53,7 +76,6 @@ void setup()
   blink(5, 500);
   delay(1000);
   clear();
-  setCursor(0,0);
 }
 
 void loop()

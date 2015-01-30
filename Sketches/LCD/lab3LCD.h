@@ -40,8 +40,9 @@ void scrollDisplayLeft(void);
 void scrollDisplayRight(void);
 void blink (int, int);
 void clear(void);
-void createChar (int, char*);
+void createChar (int, byte*);
 
+void write(int);
 void setupCommand(byte x);
 void command(byte x);
 void pulse(void);
