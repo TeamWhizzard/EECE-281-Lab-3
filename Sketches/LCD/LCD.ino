@@ -8,13 +8,15 @@
 #include "lab3LCD.h"
 
 const int pinMoisture = A0;
+
 const String message_one = "Hello and welcome to our demo!";
 const String message_two = "EECE 281 section 202 Team L2D-7B";
 const String message_whizzard = "Team Whizzard presents:";
 const String message_title = "Moisture Meter";
-int history [13] = {-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1};
-int num = 0;
-int moistureLast;
+
+int num = 0; // counts number of iterations of void loop() function
+int moistureLast; // keeps track of last moisture reading
+int history [13] = {-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1}; // acts as circular array to keep track of past thirteen moisture reading for top line display
 char block = 0xFF;
 
 void setup()
@@ -30,13 +32,14 @@ void setup()
 void loop()
 {
   setCursor(0,0);
-  int moisture = analogRead(pinMoisture);
+  int moisture = analogRead(pinMoisture); // moisture reading
   printLine(String(moisture));
-  moistureHistory (moisture / 100);
-  moistureLive(moisture / 40);
+  moistureHistory (moisture / 100); // division will pass an int within range 0 to 8
+  moistureLive(moisture / 40); // division will pass an int within range 0 to 16 based on tested moisture thresholds
   delay(700);
 }
 
+// initializeGraph() - creates requested characters in LCD RAM
 void initializeGraph ()
 { 
   byte graphChar[] = {ZEROS, ZEROS, ZEROS, ZEROS, ZEROS, ZEROS, ZEROS, ZEROS};
@@ -50,6 +53,7 @@ void initializeGraph ()
   printLine((String) block);
 }
 
+// moistureHistory() - displays a bar graph of moisture history on top line of LCD display
 void moistureHistory (int moisture)
 {
   setCursor(3,0);
@@ -64,6 +68,7 @@ void moistureHistory (int moisture)
   num++;
 }
 
+// moistureLive() - displays bar representation of most recent moisture reading on bottom line of LCD display
 void moistureLive (int moisture)
 { 
   if (moisture > moistureLast) {

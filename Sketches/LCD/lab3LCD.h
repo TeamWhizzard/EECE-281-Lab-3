@@ -33,20 +33,19 @@
 
 #define ARRAY_SIZE(x)	(sizeof(x) / sizeof(x[0]) - 1) // Array Size Macro for strings without null
 
+void blink (int, int);
+void characterMode(void);
+void clear(void);
+void command(byte x);
+void commandMode(void);
+void createChar (int, byte*);
 void lcdInitialize();
 void printLine(String);
-void setCursor(int, int);
+void pulse(void);
 void scrollDisplayLeft(void);
 void scrollDisplayRight(void);
-void blink (int, int);
-void clear(void);
-void createChar (int, byte*);
-
-void write(int);
 void setupCommand(byte x);
-void command(byte x);
-void pulse(void);
-void commandMode(void);
-void characterMode(void);
+void setCursor(int, int);
+void write(int);
 
 #endif
