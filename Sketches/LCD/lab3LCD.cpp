@@ -44,7 +44,7 @@ void pulse()
 
 void command(byte x)
 {
-  PORTB = x;
+  PORTB = B001111 & x;
   pulse();
 }
 
@@ -120,6 +120,21 @@ void scrollDisplayRight()
   command(CD_SHIFT_RIGHT);
   delayMicroseconds(2500);
   characterMode(); 
+}
+
+void createChar (int ramSpot, char * charMap) {
+  byte address = SET_CGRAM | ramSpot << 3;
+  
+  commandMode();
+  command(address >> 4); // set one of eight ram locations
+  command(address);
+  characterMode();
+  for (int i = 0; i < 8; i++) {
+    command(charMap[i] >> 4);
+    command(charMap[i]);	
+    delayMicroseconds(100);
+  }
+  
 }
 
 void clear()

@@ -28,6 +28,7 @@
 #define CD_SHIFT                B0001   // First four bits of Cursor or Display Shift
 #define CD_SHIFT_LEFT           B1000   // Second four bits of Left Cursor or Display Shift
 #define CD_SHIFT_RIGHT          B1100   // Second four bits of Right Cursor or Display Shift
+#define SET_CGRAM               B0100  // First for bits of Set CGRAM Address command
 
 #define ARRAY_SIZE(x)	(sizeof(x) / sizeof(x[0]) - 1) // Array Size Macro for strings without null
 
@@ -38,6 +39,7 @@ void scrollDisplayLeft(void);
 void scrollDisplayRight(void);
 void blink (int, int);
 void clear(void);
+void createChar (int, char*);
 
 void command(byte x);
 void pulse(void);
