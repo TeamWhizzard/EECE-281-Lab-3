@@ -138,11 +138,8 @@ void createChar (int ramSpot, byte * charMap)
   command(address);
   characterMode();
   for (int i = 0; i < 8; i++) {
-    Serial.print(charMap[i]);
-    Serial.print(" ");
     command(charMap[i]);
   }
-  Serial.println("");
 }
 
 void clear() // clears LCD display
