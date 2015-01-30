@@ -23,7 +23,7 @@ void lcdInitialize () // LCD initialization sequence
 
   for (int i = 0; i < SETUP_SIZE; i++) // Initialize LCD
   {
-    if (i > 3)
+    if (i < 4)
     {
       setupCommand(setupCmds[i]); // 4 bit setup command
     }
@@ -36,11 +36,7 @@ void lcdInitialize () // LCD initialization sequence
   characterMode(); // Set character input for loop()
 }
 
-<<<<<<< HEAD
-void pulse()
-=======
 void pulse() // pulses enable pin to signal data byte send has complete
->>>>>>> origin/master
 {
   digitalWrite(ENABLE, HIGH);
   delayMicroseconds(1);
@@ -48,31 +44,23 @@ void pulse() // pulses enable pin to signal data byte send has complete
   delayMicroseconds(1);
 }
 
-<<<<<<< HEAD
 // 4 bit commands used only in the start of the setup are sent with this.
 void setupCommand(byte four)
-=======
-void command(byte x)  // sends signal over 4 bit bus
->>>>>>> origin/master
 {
-  PORTB = B001111 & four; // ensure we don't send data to pins 11/12 which aren't hooked up.
+  PORTB = four; // ensure we don't send data to pins 11/12 which aren't hooked up.
   pulse();
 }
 
-<<<<<<< HEAD
 void command(byte eight)
 {
   PORTB = eight >> 4;
   pulse();
-  PORTB = 0x0F & eight  // ensure we don't send data to pins 11/12 which aren't hooked up.
+  PORTB = 0x0F & eight;  // ensure we don't send data to pins 11/12 which aren't hooked up.
   pulse();
   delayMicroseconds(100);
 }
 
-void printLine(String message)
-=======
 void printLine(String message) // prints passed message to LCD display
->>>>>>> origin/master
 {
   char stoaBuffer[BLENGTH];
   message.toCharArray(stoaBuffer, BLENGTH);
@@ -100,13 +88,10 @@ void setCursor(int column, int row) // sets LCD cursor to specified row and colu
   commandMode();
  
   if (row == 0) { // top row, set to DDRAM address 0x80
-    command (ROW_TOP);
-    command ((byte) column);
+    command (ROW_TOP | (byte) column);
   } else if (row == 1) { // bottom row, set to DDRAM address 0xC0
-    command (ROW_BOTTOM);
-    command ((byte) column);
-  }
- 
+    command (ROW_BOTTOM | (byte) column);
+  } 
   characterMode(); 
 }
 
