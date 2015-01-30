@@ -14,8 +14,8 @@ void lcdInitialize () {
   pinMode(RS, OUTPUT); // Pin Mapping RS as Output
   pinMode(ENABLE, OUTPUT); // Pin Mapping Enable as Output
  
-  byte setupCmds[] = {INIT, INIT, INIT, FOURBIT, B0010, FUNCTION_SET, ZEROS, LCD_OFF, ZEROS, CLEAR, ZEROS, ENTRY_MODE, ZEROS, LCD_ON};
-  int setupDelays[] = {4500, 150, 100, 100, 0, 100, 0, 100, 0, 2500, 0, 100, 0, 100};
+  byte setupCmds[] = {INIT, INIT, INIT, FOURBIT, FUNCTION_SET, LCD_OFF, CLEAR, ENTRY_MODE, LCD_ON};
+  int setupDelays[] = {4500, 150, 100, 0, 0, 0, 2400, 0, 0};
 
   delay(20); // Initial delay before LCD init
   commandMode(); // Prep LCD to receive initialization commands
@@ -23,15 +23,17 @@ void lcdInitialize () {
 
   for (int i = 0; i < SETUP_SIZE; i++) // Initialize LCD
   {
-    command(setupCmds[i]);
+    if (i > 3)
+    {
+      setupCommand(setupCmds[i]); // 4 bit setup command
+    }
+    else
+    {
+      command(setupCmds[i]); // 8 bit setup command
+    }
     delayMicroseconds(setupDelays[i]);
   }
   characterMode(); // Set character input for loop()
-}
-
-void setCharacter()
-{
-   
 }
 
 void pulse()
@@ -42,23 +44,30 @@ void pulse()
   delayMicroseconds(1);
 }
 
-void command(byte x)
+// 4 bit commands used only in the start of the setup are sent with this.
+void setupCommand(byte four)
 {
-  PORTB = B001111 & x;
+  PORTB = B001111 & four; // ensure we don't send data to pins 11/12 which aren't hooked up.
   pulse();
+}
+
+void command(byte eight)
+{
+  PORTB = eight >> 4;
+  pulse();
+  PORTB = 0x0F & eight  // ensure we don't send data to pins 11/12 which aren't hooked up.
+  pulse();
+  delayMicroseconds(100);
 }
 
 void printLine(String message)
 {
   char stoaBuffer[BLENGTH];
-
-  message.toCharArray(stoaBuffer,BLENGTH);
-
+  message.toCharArray(stoaBuffer, BLENGTH);
+  
   for (int i = 0; i < message.length(); i++)
   {
-    command(stoaBuffer[i] >> 4);
     command(stoaBuffer[i]);	
-    delayMicroseconds(100);
   }
 }
 
@@ -93,10 +102,8 @@ void blink (int n, int time) // time in miliseconds
 {
   commandMode();
   for (int i = 0; i < n; i++) {
-    command(ZEROS);
     command(LCD_OFF);
     delay(time);
-    command(ZEROS);
     command(LCD_ON);
     delay(time);
   }
@@ -106,7 +113,6 @@ void blink (int n, int time) // time in miliseconds
 void scrollDisplayLeft()
 {
   commandMode();
-  command(CD_SHIFT);  // LCD cursor shift
   command(CD_SHIFT_LEFT);
   delayMicroseconds(2500);
   characterMode(); 
@@ -116,7 +122,6 @@ void scrollDisplayLeft()
 void scrollDisplayRight()
 {
   commandMode();
-  command(CD_SHIFT);  // LCD cursor shift
   command(CD_SHIFT_RIGHT);
   delayMicroseconds(2500);
   characterMode(); 
@@ -126,21 +131,16 @@ void createChar (int ramSpot, char * charMap) {
   byte address = SET_CGRAM | ramSpot << 3;
   
   commandMode();
-  command(address >> 4); // set one of eight ram locations
   command(address);
   characterMode();
   for (int i = 0; i < 8; i++) {
-    command(charMap[i] >> 4);
     command(charMap[i]);	
-    delayMicroseconds(100);
-  }
-  
+  }  
 }
 
 void clear()
 {
   commandMode();
-  command(ZEROS);
   command(CLEAR);
   delayMicroseconds(2500);
   characterMode();
